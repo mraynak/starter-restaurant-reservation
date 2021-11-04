@@ -44,7 +44,7 @@ function Dashboard({ date }) {
       <div>
         <Reservation reservations= {reservations} />
       </div>
-      {JSON.stringify(reservations)}
+      {/* {JSON.stringify(reservations)} */}
     </main>
   );
 }

@@ -22,6 +22,9 @@ function CreateReservation() {
     const [formData, setFormData] = useState(initialFormState)
     const [reservationError, setReservationError] = useState(null)
     const [peopleError, setPeopleError] = useState(null)
+    const [dateError, setDateError] = useState(null)
+    const [dayError, setDayError] = useState(null)
+    const [timeError, setTimeError] = useState(null)
 
     function submitHandler(event) {
         event.preventDefault()
@@ -55,6 +58,36 @@ function CreateReservation() {
             } 
             if(target.value > 0 || !target.value) {
                 setPeopleError(null)
+            }
+        }
+        if(target.name === "reservation_date") {
+            const resDate = Date.parse(target.value)
+            const resDay = new Date(target.value).getDay()
+            if(resDate < Date.now()) {
+                setDateError({
+                    message: "Selected reservation date has already passed, date must be today or in the future"
+                })
+            }
+            if(resDate > Date.now()) {
+                setDateError(null)
+            }
+            if(resDay + 1 === 2) {
+                setDayError({
+                    message: "Reservation day is invalid. The restuarant is closed on Tuesdays"
+                })
+            }
+            if(resDay + 1 !== 2) {
+                setDayError(null)
+            }
+        }
+        if(target.name === "reservation_time") {
+            if(target.value < "10:30" || target.value > "21:30") {
+                setTimeError({
+                    message: "Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing"
+                })
+            }
+            if(target.value > "10:30" && target.value < "21:30") {
+                setTimeError(null)
             }
         }
         setFormData({
@@ -108,6 +141,8 @@ function CreateReservation() {
                 </div>
                 <div className="form-group">
                     <label className="form-label" htmlFor="date">Reservation Date:</label>
+                    <ErrorAlert error={dateError} />
+                    <ErrorAlert error={dayError} />
                     <input
                         type="date"
                         pattern="\d{4}-\d{2}-\d{2}"
@@ -121,6 +156,7 @@ function CreateReservation() {
                 </div>
                 <div className="form-group">
                     <label className="form-label" htmlFor="time">Reservation Time:</label>
+                    <ErrorAlert error={timeError} />
                     <input
                         type="time"
                         pattern="[0-9]{2}:[0-9]{2}"
