@@ -169,7 +169,7 @@ function CreateReservation() {
                     />
                 </div>
                 <div className="form-group">
-                    <label className="form-label" htmlFor="People:">Number of People:</label>
+                    <label className="form-label" htmlFor="people">Number of People:</label>
                     <ErrorAlert error={peopleError} />
                     <input
                         type="number"

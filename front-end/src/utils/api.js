@@ -58,6 +58,8 @@ async function fetchJson(url, options, onCancel) {
  *  a promise that resolves to a possibly empty array of reservation saved in the database.
  */
 
+//List functions
+
 export async function listReservations(params, signal) {
   const url = new URL(`${API_BASE_URL}/reservations`);
   Object.entries(params).forEach(([key, value]) =>
@@ -67,6 +69,20 @@ export async function listReservations(params, signal) {
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
+
+export async function listTables(signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  return await fetchJson(url, { headers, signal }, [])
+}
+
+//Read functions
+
+export async function readReservation(reservation_id, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+  return await fetchJson(url, {headers, signal}, [])
+}
+
+//Create functions
 
 export async function createReservation(data, signal) {
   const url = `${API_BASE_URL}/reservations`
@@ -78,3 +94,25 @@ export async function createReservation(data, signal) {
 //   const url = new URL(`${API_BASE_URL}/reservations`)
 //   return await fetchJson(url, { method: 'POST', body: JSON.stringify({data: data}), headers, signal }, [])
 // }
+
+export async function createTable(data, signal) {
+  const url = `${API_BASE_URL}/tables`
+  const options = {method: "POST", headers, body: JSON.stringify({ data: data}), signal}
+  return await fetchJson(url, options)
+}
+
+//Update functions
+
+//   ---------------------------------------------------------------------
+
+// export async function setReservationStatus(data, reservation_id, signal) {
+//   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`)
+//   return await fetchJson(url, { method: 'PUT', body: JSON.stringify({data: data}), headers, signal }, [])
+// }
+
+export async function seatReservation(reservation_id, table_id, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`)
+  return await fetchJson(url, { method: 'PUT', body: JSON.stringify({data: {reservation_id: reservation_id}}), headers, signal }, [])
+}
+
+

@@ -1,5 +1,6 @@
 const reservationsService = require("./reservations.service")
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
+const validTime = require("../errors/validTime")
 
 //Handlers
 
@@ -12,6 +13,10 @@ async function create(req, res) {
  */
 async function list(req, res) {
   res.json({data: res.locals.data})
+}
+
+function read(req, res) {
+  res.json({data: res.locals.reservation})
 }
 
 //Validators
@@ -88,12 +93,13 @@ function hasValidProperties(req, res, next) {
     status = "booked"
   } = req.body.data
   const reservationDate = new Date(reservation_date)
+  
 
-  if(!first_name || first_name.length === 0) {return next({status: 400, message: "First name is required for reservation"})}
-  if(!last_name || last_name.length === 0) {return next({status: 400, message: "Last name is required for reservation"})}
-  if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "Mobile Number is required for reservation"})}
-  if(!reservation_date || reservation_date.length === 0 || !reservationDate.getTime()) {return next({status: 400, message: "Reservation date is required for reservation"})}
-  if(!reservation_time || reservation_time.length === 0) {return next({status: 400, message: "Reservation time is required for reservation"})}
+  if(!first_name || first_name.length === 0) {return next({status: 400, message: "first_name is required for reservation"})}
+  if(!last_name || last_name.length === 0) {return next({status: 400, message: "last_name is required for reservation"})}
+  if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "mobile_number is required for reservation"})}
+  if(!reservation_date || reservation_date.length === 0 || !reservationDate.getTime()) {return next({status: 400, message: "reservation_date is required for reservation"})}
+  if(!reservation_time || reservation_time.length === 0 || !validTime(reservation_time)) {return next({status: 400, message: "reservation_time is required for reservation"})}
   if(!people || people <= 0) {return next({status: 400, message: "Amount of people is missing or invalid"})}
   if (req.method === "POST") {
     if(status === "seated" || status === "finished") {return next({status: 400, message: `Status must be 'booked' or left out. ${status} status not valid`})}
@@ -114,7 +120,22 @@ function hasValidProperties(req, res, next) {
   return next()
 }
 
+async function reservationExists(req, res, next) {
+  const {reservation_id} = req.params
+  const reservation = await reservationsService.read(reservation_id)
+
+  if(reservation) {
+    res.locals.reservation = reservation
+    return next()
+  }
+  return next({
+    status: 404, 
+    message: `Reservation ${reservation_id} cannot be found`
+  })
+}
+
 module.exports = {
   list: [asyncErrorBoundary(dateQuery), asyncErrorBoundary(list)],
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [hasData, hasValidProperties, hasValidDate, hasValidTime, hasValidDay, asyncErrorBoundary(create)],
 };
