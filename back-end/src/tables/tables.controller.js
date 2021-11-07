@@ -27,6 +27,26 @@ async function update(req, res, next) {
     res.json({data: await tablesService.update(updatedTable)})
 }
 
+async function destroy(req, res, next) {
+    // console.log(res.locals.tableDate.reservation_id)
+    // tablesService.setStatus(res.locals.tableDate.reservation_id, "finished")
+    const data = {
+        table_id: res.locals.table_id,
+        table_name: res.locals.tableData.table_name,
+        capacity: res.locals.tableData.capacity,
+        reservation_id: null,
+        occupied: false
+    }
+    res.json({data: await tablesService.update(data)})
+}
+
+// function finishedStatus(req, res, next) {
+//     const reservation_id = res.locals.tableDate.reservation_id
+//     console.log(reservation_id)
+//     tablesService.setStatus(reservation_id, "finished")
+//     return next()
+// }
+
   
 //Validators
 
@@ -122,7 +142,8 @@ function hasData(req, res, next) {
   }
 
   function isOccupied(req, res, next) {
-      if(res.locals.tableData.occupied = true) {
+    //   console.log(res.locals.tableData.occupied)
+      if(res.locals.tableData.occupied) {
           return next({
               status: 400,
               message: `Table ${res.locals.tableData.table_name} is already occupied`
@@ -131,8 +152,22 @@ function hasData(req, res, next) {
       return next()
   }
 
+  async function isNotOccupied(req, res, next) {
+    //   console.log(res.locals.tableData.occupied)
+      console.log(res.locals.tableData.reservation_id)
+    if(!res.locals.tableData.occupied) {
+        return next({
+            status: 400,
+            message: `Table ${res.locals.tableData.table_name} is not occupied`
+        })
+    }
+    await tablesService.setStatus(res.locals.tableData.reservation_id, "finished")
+    return next()
+}
+
   module.exports = {
       list: [asyncErrorBoundary(list)],
       create: [hasData, hasValidProperties, asyncErrorBoundary(create)],
+      destroy: [asyncErrorBoundary(tableExists), asyncErrorBoundary(isNotOccupied), asyncErrorBoundary(destroy)],
       update: [hasData, putRequestValidProperties, asyncErrorBoundary(reservationExists), asyncErrorBoundary(tableExists), hasCapacity, isNotSeated, isOccupied, asyncErrorBoundary(update)]
   }

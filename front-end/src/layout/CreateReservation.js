@@ -25,6 +25,7 @@ function CreateReservation() {
     const [dateError, setDateError] = useState(null)
     const [dayError, setDayError] = useState(null)
     const [timeError, setTimeError] = useState(null)
+    const [pastTimeError, setPastTimeError] = useState(null)
 
     function submitHandler(event) {
         event.preventDefault()
@@ -61,9 +62,10 @@ function CreateReservation() {
             }
         }
         if(target.name === "reservation_date") {
-            const resDate = Date.parse(target.value)
+            const resDate = Date.parse(target.value) + 77400000
             const resDay = new Date(target.value).getDay()
-            if(resDate < Date.now()) {
+            const date = Date.now() - 25200000
+            if(resDate < date) {
                 setDateError({
                     message: "Selected reservation date has already passed, date must be today or in the future"
                 })
@@ -81,9 +83,23 @@ function CreateReservation() {
             }
         }
         if(target.name === "reservation_time") {
+            const data = document.querySelector("input[name='reservation_date']")
+            const value = data.value
+            const parseTime = Date.parse(value)
+            const resTimeOfDay = (Number(target.value.substring(0,2) * 60) + Number(target.value.substring(3))) * 60000
+            const resTime = (resTimeOfDay + parseTime)
+            const time = Date.now() - 25200000
+            if(resTime < time) {
+                setPastTimeError({
+                    message: `Selected reservation time has already passed, time must be today or in the future`
+                })
+            }
+            if(resTime >= time) {
+                setPastTimeError(null)
+            }
             if(target.value < "10:30" || target.value > "21:30") {
                 setTimeError({
-                    message: "Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing"
+                    message: `Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing`
                 })
             }
             if(target.value > "10:30" && target.value < "21:30") {
@@ -157,6 +173,7 @@ function CreateReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="time">Reservation Time:</label>
                     <ErrorAlert error={timeError} />
+                    <ErrorAlert error={pastTimeError} />
                     <input
                         type="time"
                         pattern="[0-9]{2}:[0-9]{2}"

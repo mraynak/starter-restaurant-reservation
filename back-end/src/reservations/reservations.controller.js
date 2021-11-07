@@ -49,7 +49,7 @@ function hasData(req, res, next) {
 
 function hasValidDate(req, res, next) {
   const {reservation_date} = res.locals
-  if(Date.parse(reservation_date) < Date.now()) {
+  if((Date.parse(reservation_date) + 77400000) < Date.now() - 25200000) {
     return next({
       status: 400,
       message: "Selected reservation date has already passed, date must be today or in the future"
@@ -67,6 +67,19 @@ function hasValidTime(req, res, next) {
     })
   }
   return next()
+}
+function timeNotPassed(req, res, next) {
+  const {reservation_time, reservation_date} = res.locals
+  const parseTime = Date.parse(reservation_date)
+  const resTimeOfDay = (Number(reservation_time.substring(0,2) * 60) + Number(reservation_time.substring(3))) * 60000
+  const resTime = (resTimeOfDay + parseTime)
+  const time = Date.now() - 25200000
+  if(resTime < time) {
+      return next({
+          message: `Selected reservation time has already passed, time must be today or in the future`
+      })
+  }
+  next()
 }
 
 function hasValidDay(req, res, next) {
@@ -137,5 +150,5 @@ async function reservationExists(req, res, next) {
 module.exports = {
   list: [asyncErrorBoundary(dateQuery), asyncErrorBoundary(list)],
   read: [asyncErrorBoundary(reservationExists), read],
-  create: [hasData, hasValidProperties, hasValidDate, hasValidTime, hasValidDay, asyncErrorBoundary(create)],
+  create: [hasData, hasValidProperties, hasValidDate, hasValidTime, hasValidDay, timeNotPassed, asyncErrorBoundary(create)],
 };

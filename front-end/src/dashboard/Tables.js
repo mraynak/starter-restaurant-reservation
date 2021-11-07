@@ -1,8 +1,24 @@
-import React from "react"
+import React, {useState} from "react"
+import { finishReservation } from "../utils/api"
+import ErrorAlert from "../layout/ErrorAlert"
 import image_table from "../images/image_table.jpeg"
 import image_table_bar from "../images/image_table_bar.jpeg"
 
-function Tables({tables}) {
+function Tables({tables, loadDashboard}) {
+
+    const [error, setError] = useState(null)
+    async function completeRes(event) {
+        event.preventDefault()
+        const abortController = new AbortController()
+        console.log(event.target.id)
+
+        if(window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
+            await finishReservation(event.target.id, abortController.signal)
+            .catch(setError)
+
+            loadDashboard()
+        }
+    }
     const list = tables.map((table) => {
         const table_id = table.table_id
         return (
@@ -14,11 +30,16 @@ function Tables({tables}) {
                     {table.reservation_id && <p className='card-subtitle mt-1'>Reservation ID: {table.reservation_id}</p>}
                     <p data-table-id-status={tables.table_id} className="mt-1">Availability: {table.occupied ? "Occupied" : "Free" }</p>
                 </div>
+                <button id={table.table_id} className="btn btn-danger m-3" data-table-id-finish={table.table_id} onClick={completeRes}>Finish</button>
             </div>
         )
     })
     return (
+
         <>
+            <div>
+                <ErrorAlert error={error} />
+            </div>
             {list}
         </>
     )

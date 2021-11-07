@@ -30,10 +30,10 @@ function setStatus(id, status) {
         .update({"status": status})
 }
 
-function read(tableId) {
+function read(table_id) {
     return knex("tables")
         .select("*")
-        .where({"table_id": tableId})
+        .where({"table_id": table_id})
         .first()
 }
 

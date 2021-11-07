@@ -54,7 +54,7 @@ function Dashboard({ date }) {
       </div>
       <div className="m-3">
         <div className="row">
-        <Tables tables={tables} />
+        <Tables tables={tables} loadDashboard={loadDashboard}/>
         </div>
       </div>
       {/* {JSON.stringify(tables)} */}

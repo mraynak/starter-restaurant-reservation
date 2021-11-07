@@ -21,6 +21,7 @@ function SeatReservation() {
             .catch(setReservationError)
         listTables(abortController.signal)
             .then(setTables)
+            .catch(setErrors)
         return () => abortController.abort();
     }
 
@@ -41,7 +42,6 @@ function SeatReservation() {
         }
     }
 
-    console.log(tables)
     return (
         <div>
             {/* {JSON.stringify(reservation)} */}
@@ -60,7 +60,7 @@ function SeatReservation() {
                 <select name="table_id" className="form-control">
                     {(tables.map((table) => {
                         if(table.capacity >= reservation.people) {
-                            return <option id={table.table_id}>{table.table_name} - {table.capacity}</option>
+                            return <option key={table.table_name} id={table.table_id}>{table.table_name} - {table.capacity}</option>
                             }
                             return null
                         }

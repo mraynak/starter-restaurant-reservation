@@ -10,7 +10,8 @@ function Reservation({reservations}) {
                     <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
                     <p className="card-text">Reservation Date: {reservation.reservation_date}<br />
                     Reservation Time: {reservation.reservation_time}<br />
-                    Amount of People: {reservation.people}</p>
+                    Amount of People: {reservation.people}<br />
+                    Status: {reservation.status}</p>
                     <a href={`/reservations/${reservation_id}/seat`} className="btn btn primary">Seat</a>
                 </div>
             </div>
