@@ -12,6 +12,7 @@ async function create(req, res) {
  * List handler for reservation resources
  */
 async function list(req, res) {
+  console.log(res.locals.data)
   res.json({data: res.locals.data})
 }
 
@@ -22,16 +23,27 @@ function read(req, res) {
 //Validators
 
 async function dateQuery(req, res, next) {
-  const {date} = req.query
-  let dateValue = Date.parse(date)
+  const {date, mobile_phone} = req.query
+  console.log(mobile_phone)
 
-  if(!date || date.length === 0) {return next({status: 400, message:"No date value specified"})}
-  if(!dateValue) {return next({status: 400, message: "Given date is invalid"})}
+  if(!mobile_phone) {
+    let dateValue = Date.parse(date)
 
-  const data = await reservationsService.listByDate(date)
-  if(!data || data.length === 0) {return next({status: 404, message: "No reservations for given date"})}
+    if(!date || date.length === 0) {return next({status: 400, message:"No date value specified"})}
+    if(!dateValue) {return next({status: 400, message: "Given date is invalid"})}
 
-  res.locals.data = data
+    const data = await reservationsService.listByDate(date)
+    if(!data || data.length === 0) {return next({status: 404, message: "No reservations for given date"})}
+
+    res.locals.data = data
+  }
+  if(!date) {
+    if(!mobile_phone || mobile_phone.length === 0) {return next({status: 400, message: "No phone number specified"})}
+    const data = await reservationsService.search(mobile_phone)
+    if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
+
+    res.locals.data = data
+  }
   return next()
 }
 

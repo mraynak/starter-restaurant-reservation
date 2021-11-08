@@ -33,7 +33,7 @@ function CreateReservation() {
         // const inputData = document.querySelectorAll('input')
 
         // let data = getData(inputData)
-        console.log(formData)
+        // console.log(formData)
         
         createReservation(formData, abortController.signal)
         .then(() => {history.push(`/dashboard?date=${formData["reservation_date"]}`)})

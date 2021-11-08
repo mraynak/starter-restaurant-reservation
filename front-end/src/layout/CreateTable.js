@@ -49,7 +49,7 @@ function CreateTable() {
             <h1>Create Table</h1>
             <form>
                 <div className="form-group">
-                    <label className="form-label" htmlFor="tabel-name">Table Name:</label>
+                    <label className="form-label" htmlFor="table-name">Table Name:</label>
                     <input
                         type="text"
                         className="form-control"
