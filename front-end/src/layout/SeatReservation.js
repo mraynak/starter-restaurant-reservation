@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react"
-import { listTables, readReservation, seatReservation} from "../utils/api"
+import { listTables, readReservation, seatReservation, setStatus} from "../utils/api"
 import {useHistory, useParams} from "react-router-dom"
 import ErrorAlert from "./ErrorAlert"
 
@@ -27,7 +27,7 @@ function SeatReservation() {
 
     async function submitHandler(event) {
         event.preventDefault()
-        console.log(reservation_id)
+        // console.log(reservation_id)
         const abortController = new AbortController()
         setErrors(null)
 
@@ -36,6 +36,12 @@ function SeatReservation() {
 
         try {
             await seatReservation(reservation_id, selectedId, abortController.signal)
+            const data = {
+                reservation_id: reservation_id,
+                status: "seated"
+            }
+
+            await setStatus(data, reservation_id, abortController.signal)
             history.push('/dashboard')
         } catch(error) {
             setErrors(error)
@@ -59,10 +65,10 @@ function SeatReservation() {
                 <label>Table</label>
                 <select name="table_id" className="form-control">
                     {(tables.map((table) => {
-                        if(table.capacity >= reservation.people) {
+                        // if(table.capacity >= reservation.people) {
                             return <option key={table.table_name} id={table.table_id}>{table.table_name} - {table.capacity}</option>
-                            }
-                            return null
+                            // }
+                            // return null
                         }
                     ))}
                 </select>

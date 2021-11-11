@@ -23,17 +23,18 @@ function SearchByNumber(){
         setReservationsError(null)
         await listReservationsByNumber(formData.mobile_number, abortController.signal)
             .then(setReservations)
+            .then(() => {history.push(`/search?mobile_number=${formData.mobile_number}`)})
             .catch(setReservationsError)
     }
 
     function changeHandler({target}) {
         if(target.name === "mobile_number") {
-            if(target.value.length < 10) {
+            if(target.value.length < 1 ) {
                 setNumberError({
-                    message: "Mobile number must be 10 digits"
+                    message: "Mobile number must be included"
                 })
             }
-            if(target.value.length >= 10) {
+            if(target.value.length >= 1) {
                 setNumberError(null)
             }
         }
@@ -64,6 +65,7 @@ function SearchByNumber(){
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </form>
             <div>
+                {reservations.length === 0 && <ErrorAlert error={{message: 'No reservations found'}} />}
                 <Reservation reservations={reservations} />
             </div>
         </div>

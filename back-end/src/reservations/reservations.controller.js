@@ -12,7 +12,7 @@ async function create(req, res) {
  * List handler for reservation resources
  */
 async function list(req, res) {
-  console.log(res.locals.data)
+  // console.log(res.locals.data)
   res.json({data: res.locals.data})
 }
 
@@ -20,13 +20,20 @@ function read(req, res) {
   res.json({data: res.locals.reservation})
 }
 
+async function update(req, res, next) {
+  const status = res.locals.status
+  // console.log(status)
+  res.json({data: await reservationsService.update(res.locals.reservation.reservation_id, status )})
+}
+
+
 //Validators
 
 async function dateQuery(req, res, next) {
-  const {date, mobile_phone} = req.query
-  console.log(mobile_phone)
+  const {date, mobile_number} = req.query
+  console.log(mobile_number)
 
-  if(!mobile_phone) {
+  if(!mobile_number) {
     let dateValue = Date.parse(date)
 
     if(!date || date.length === 0) {return next({status: 400, message:"No date value specified"})}
@@ -38,9 +45,9 @@ async function dateQuery(req, res, next) {
     res.locals.data = data
   }
   if(!date) {
-    if(!mobile_phone || mobile_phone.length === 0) {return next({status: 400, message: "No phone number specified"})}
-    const data = await reservationsService.search(mobile_phone)
-    if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
+    if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "No phone number specified"})}
+    const data = await reservationsService.search(mobile_number)
+    // if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
 
     res.locals.data = data
   }
@@ -49,7 +56,7 @@ async function dateQuery(req, res, next) {
 
 function hasData(req, res, next) {
   const {data} = req.body
-
+  console.log(data)
   if(!data) {
     return next({
       status: 400, 
@@ -72,6 +79,7 @@ function hasValidDate(req, res, next) {
 
 function hasValidTime(req, res, next) {
   const {reservation_time} = res.locals
+  console.log(typeof reservation_time)
   if(reservation_time < "10:30" || reservation_time > "21:30") {
     return next({
       status: 400,
@@ -97,7 +105,7 @@ function timeNotPassed(req, res, next) {
 function hasValidDay(req, res, next) {
   const {reservation_date} = res.locals
   const actualDay = new Date(reservation_date).getDay()
-  console.log(actualDay)
+  // console.log(actualDay)
   if(actualDay + 1 === 2) {
     return next({
       status: 400,
@@ -141,6 +149,18 @@ function hasValidProperties(req, res, next) {
       status: status,
     }
   }
+  if (req.method === "PUT" && req.path === `/${res.locals.reservation_id}`) {
+    res.locals = {
+      first_name: first_name,
+      last_name: last_name,
+      mobile_number: mobile_number,
+      reservation_date: reservation_date,
+      reservation_time: reservation_time,
+      people: people,
+      status: status,
+      reservation_id: res.locals.reservation.reservation_id
+    }
+  }
 
   return next()
 }
@@ -159,8 +179,35 @@ async function reservationExists(req, res, next) {
   })
 }
 
+const VALID_STATUS = [
+  "booked", 
+  "seated",
+  "finished",
+  "cancelled"
+]
+async function validStatus(req, res, next) {
+  const {status} = req.body.data
+  console.log(status)
+
+  if(!VALID_STATUS.includes(status)) {
+    return next({
+      status: 400,
+      message: `Invalid status: ${status}`
+    })
+  }
+  if(res.locals.reservation.status === "finished") {
+    return next({
+      status: 400,
+      message: "Reservation is already finished and cannot be updated"
+    })
+  }
+  res.locals.status = status
+  return next()
+}
+
 module.exports = {
   list: [asyncErrorBoundary(dateQuery), asyncErrorBoundary(list)],
   read: [asyncErrorBoundary(reservationExists), read],
+  update: [asyncErrorBoundary(reservationExists), hasData, validStatus, asyncErrorBoundary(update)],
   create: [hasData, hasValidProperties, hasValidDate, hasValidTime, hasValidDay, timeNotPassed, asyncErrorBoundary(create)],
 };

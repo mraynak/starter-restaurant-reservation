@@ -21,6 +21,14 @@ function read(reservation_id) {
         .first()
 }
 
+function update(id, status) {
+    return knex("reservations")
+        .where({"reservation_id": id})
+        .update({"status": status})
+        .returning("*")
+        .then((updatedRecords) => updatedRecords[0])
+}
+
 function search(mobile_number) {
     return knex("reservations")
       .whereRaw(
@@ -36,4 +44,5 @@ module.exports = {
     listByDate,
     create,
     search,
+    update,
 }

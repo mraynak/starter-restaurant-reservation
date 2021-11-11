@@ -34,7 +34,7 @@ function CreateReservation() {
 
         // let data = getData(inputData)
         // console.log(formData)
-        
+        setTimeError(null)
         createReservation(formData, abortController.signal)
         .then(() => {history.push(`/dashboard?date=${formData["reservation_date"]}`)})
         .catch(setReservationError)
@@ -83,6 +83,7 @@ function CreateReservation() {
             }
         }
         if(target.name === "reservation_time") {
+            console.log(target.value)
             const data = document.querySelector("input[name='reservation_date']")
             const value = data.value
             const parseTime = Date.parse(value)
@@ -97,14 +98,14 @@ function CreateReservation() {
             if(resTime >= time) {
                 setPastTimeError(null)
             }
-            if(target.value < "10:30" || target.value > "21:30") {
-                setTimeError({
-                    message: `Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing`
-                })
-            }
-            if(target.value > "10:30" && target.value < "21:30") {
-                setTimeError(null)
-            }
+            // if(target.value < "10:30" || target.value > "21:30") {
+            //     setTimeError({
+            //         message: `Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing`
+            //     })
+            // }
+            // if(target.value >= "10:30" && target.value <= "21:30") {
+            //     setTimeError(null)
+            // }
         }
         setFormData({
             ...formData,

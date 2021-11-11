@@ -12,7 +12,7 @@ function Reservation({reservations}) {
                     Reservation Time: {reservation.reservation_time}<br />
                     Amount of People: {reservation.people}</p>
                     <p className="card-text" data-reservation-id-status={reservation.reservation_id}>Status: {reservation.status}</p>
-                    <a href={`/reservations/${reservation_id}/seat`} className="btn btn primary">Seat</a>
+                    {reservation.status === "booked" ? <a href={`/reservations/${reservation_id}/seat`} className="btn btn primary">Seat</a> : null}
                 </div>
             </div>
         )

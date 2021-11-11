@@ -2,6 +2,7 @@ const tablesService = require("./tables.service")
 const reservationsService = require("../reservations/reservations.service")
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 
+
 //Handlers
 
 async function list(req, res, next) {
@@ -28,8 +29,8 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res, next) {
-    // console.log(res.locals.tableDate.reservation_id)
-    // tablesService.setStatus(res.locals.tableDate.reservation_id, "finished")
+    // console.log(res.locals.tableData.reservation_id)
+    // tablesService.setStatus(res.locals.tableData.reservation_id, "finished")
     const data = {
         table_id: res.locals.table_id,
         table_name: res.locals.tableData.table_name,
@@ -41,7 +42,7 @@ async function destroy(req, res, next) {
 }
 
 // function finishedStatus(req, res, next) {
-//     const reservation_id = res.locals.tableDate.reservation_id
+//     const reservation_id = res.locals.tableData.reservation_id
 //     console.log(reservation_id)
 //     tablesService.setStatus(reservation_id, "finished")
 //     return next()
@@ -64,14 +65,25 @@ function hasData(req, res, next) {
   }
 
   function hasValidProperties(req, res, next) {
-    const {table_name, capacity} = res.locals.data
-    
-    if(!table_name || table_name.length === 0) {
+    const {table_name, capacity, reservation_id} = res.locals.data
+    console.log(res.locals.data)
+    // const newCapacity = JSON.parse(capacity)
+    if(reservation_id) {
+        const table = {
+            table_name: table_name,
+            capacity: capacity,
+            reservation_id: reservation_id,
+            occupied: true,
+        }
+        res.locals.data = table
+    }
+    if(!table_name || !table_name.length || table_name.length < 2) {
         return next({status: 400, message: "table_name is required for reservation"})
     }
-    if(!capacity || capacity <= 0) {
+    if(!capacity || capacity === 0) {
         return next({status: 400, message: "Table capacity is missing or invalid"})
     }
+    
     return next()
   }
 
@@ -154,7 +166,7 @@ function hasData(req, res, next) {
 
   async function isNotOccupied(req, res, next) {
     //   console.log(res.locals.tableData.occupied)
-      console.log(res.locals.tableData.reservation_id)
+    //   console.log(res.locals.tableData.reservation_id)
     if(!res.locals.tableData.occupied) {
         return next({
             status: 400,
