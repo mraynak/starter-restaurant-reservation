@@ -42,16 +42,6 @@ function EditReservation() {
 
     function changeHandler({target}) {
         console.log(formData)
-        if(target.name === "people") {
-            if(target.value < 1) {
-                setPeopleError({
-                    message: "Amount of people must be more then 0"
-                })
-            } 
-            if(target.value > 0 || !target.value) {
-                setPeopleError(null)
-            }
-        }
         if(target.name === "reservation_date") {
             const resDate = Date.parse(target.value) + 77400000
             const resDay = new Date(target.value).getDay()
@@ -98,10 +88,26 @@ function EditReservation() {
             //     setTimeError(null)
             // }
         }
+        if(target.name === "people") {
+            if(target.value < 1) {
+                setPeopleError({
+                    message: "Amount of people must be more then 0"
+                })
+            } 
+            if(target.value > 0 || !target.value) {
+                setPeopleError(null)
+            }
+            const peopleNum = Number(target.value)
+            setFormData({
+                ...formData,
+                people: peopleNum
+            })
+        } else {
         setFormData({
             ...formData,
             [target.name]: target.value
         });
+        }
     }
 
     async function submitHandler(event) {

@@ -138,7 +138,7 @@ function hasValidProperties(req, res, next) {
   if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "mobile_number is required for reservation"})}
   if(!reservation_date || reservation_date.length === 0 || !reservationDate.getTime()) {return next({status: 400, message: "reservation_date is required for reservation"})}
   if(!reservation_time || reservation_time.length === 0 || !validTime(reservation_time)) {return next({status: 400, message: "reservation_time is required for reservation"})}
-  if(!people || people <= 0) {return next({status: 400, message: "Amount of people is missing or invalid"})}
+  if(!people || people <= 0 || !Number.isInteger(people)) {return next({status: 400, message: "Amount of people is missing or invalid"})}
   if (req.method === "POST") {
     if(status === "seated" || status === "finished" || status === "cancelled") {return next({status: 400, message: `Status must be 'booked' or left out. ${status} status not valid`})}
   }

@@ -72,7 +72,7 @@ function hasData(req, res, next) {
     if(!table_name || !table_name.length || table_name.length < 2) {
         return next({status: 400, message: "table_name is required for reservation"})
     }
-    if(!capacity || capacity === 0) {
+    if(!capacity || capacity === 0 || !Number.isInteger(capacity)) {
         return next({status: 400, message: "Table capacity is missing or invalid"})
     }
     if(reservation_id) {

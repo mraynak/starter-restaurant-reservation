@@ -19,7 +19,6 @@ function CreateTable() {
     function submitHandler(event) {
         event.preventDefault()
         const abortController = new AbortController()
-        console.log(formData)
         
         createTable(formData, abortController.signal)
         .then(() => {history.push("/")})
@@ -27,6 +26,7 @@ function CreateTable() {
     }
 
     function changeHandler({target}) {
+        // console.log(typeof Number(target.value))
         if(target.name === "capacity") {
             if(target.value < 1) {
                 setCapacityError({
@@ -36,11 +36,19 @@ function CreateTable() {
             if(target.value > 0 || !target.value) {
                 setCapacityError(null)
             }
+            const capacityNum = Number(target.value)
+            console.log(typeof capacityNum)
+            setFormData({
+                ...formData,
+                capacity: capacityNum
+            })
+        } else {
+            setFormData({
+                ...formData,
+                [target.name]: target.value
+            })
         }
-        setFormData({
-            ...formData,
-            [target.name]: target.value
-        })
+        console.log(typeof formData.capacity)
     }
     return (
         <>
