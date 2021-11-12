@@ -215,7 +215,7 @@ function bookedStatus(req, res, next) {
   const {status} = req.body.data
   console.log(status)
 
-  if(status !== "booked") {
+  if(res.locals.reservation.status !== "booked") {
     return next({
       status: 400,
       message: `Reservtions with status ${status} cannot be edited`
