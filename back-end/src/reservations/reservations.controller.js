@@ -26,12 +26,23 @@ async function update(req, res, next) {
   res.json({data: await reservationsService.update(res.locals.reservation.reservation_id, status )})
 }
 
+async function updateRes(req, res, next) {
+  res.json({data: await reservationsService.updateRes(res.locals.data)})
+}
 
 //Validators
 
 async function dateQuery(req, res, next) {
   const {date, mobile_number} = req.query
   console.log(mobile_number)
+
+  if(!date) {
+    if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "No phone number specified"})}
+    const data = await reservationsService.search(mobile_number)
+    // if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
+
+    res.locals.data = data
+  }
 
   if(!mobile_number) {
     let dateValue = Date.parse(date)
@@ -41,13 +52,6 @@ async function dateQuery(req, res, next) {
 
     const data = await reservationsService.listByDate(date)
     if(!data || data.length === 0) {return next({status: 404, message: "No reservations for given date"})}
-
-    res.locals.data = data
-  }
-  if(!date) {
-    if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "No phone number specified"})}
-    const data = await reservationsService.search(mobile_number)
-    // if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
 
     res.locals.data = data
   }
@@ -123,9 +127,10 @@ function hasValidProperties(req, res, next) {
     reservation_date,
     reservation_time,
     people,
-    status = "booked"
+    status,
   } = req.body.data
   const reservationDate = new Date(reservation_date)
+  console.log(req.body.data)
   
 
   if(!first_name || first_name.length === 0) {return next({status: 400, message: "first_name is required for reservation"})}
@@ -135,7 +140,7 @@ function hasValidProperties(req, res, next) {
   if(!reservation_time || reservation_time.length === 0 || !validTime(reservation_time)) {return next({status: 400, message: "reservation_time is required for reservation"})}
   if(!people || people <= 0) {return next({status: 400, message: "Amount of people is missing or invalid"})}
   if (req.method === "POST") {
-    if(status === "seated" || status === "finished") {return next({status: 400, message: `Status must be 'booked' or left out. ${status} status not valid`})}
+    if(status === "seated" || status === "finished" || status === "cancelled") {return next({status: 400, message: `Status must be 'booked' or left out. ${status} status not valid`})}
   }
 
   if (req.method === "POST") {
@@ -149,8 +154,8 @@ function hasValidProperties(req, res, next) {
       status: status,
     }
   }
-  if (req.method === "PUT" && req.path === `/${res.locals.reservation_id}`) {
-    res.locals = {
+  if (req.method === "PUT" && req.path === `/${res.locals.reservation.reservation_id}`) {
+    res.locals.data = {
       first_name: first_name,
       last_name: last_name,
       mobile_number: mobile_number,
@@ -167,6 +172,7 @@ function hasValidProperties(req, res, next) {
 
 async function reservationExists(req, res, next) {
   const {reservation_id} = req.params
+  console.log(reservation_id)
   const reservation = await reservationsService.read(reservation_id)
 
   if(reservation) {
@@ -185,7 +191,7 @@ const VALID_STATUS = [
   "finished",
   "cancelled"
 ]
-async function validStatus(req, res, next) {
+function validStatus(req, res, next) {
   const {status} = req.body.data
   console.log(status)
 
@@ -205,9 +211,24 @@ async function validStatus(req, res, next) {
   return next()
 }
 
+function bookedStatus(req, res, next) {
+  const {status} = req.body.data
+  console.log(status)
+
+  if(status !== "booked") {
+    return next({
+      status: 400,
+      message: `Reservtions with status ${status} cannot be edited`
+    })
+  }
+  res.locals.status = status
+  return next()
+}
+
 module.exports = {
   list: [asyncErrorBoundary(dateQuery), asyncErrorBoundary(list)],
   read: [asyncErrorBoundary(reservationExists), read],
   update: [asyncErrorBoundary(reservationExists), hasData, validStatus, asyncErrorBoundary(update)],
+  updateRes: [asyncErrorBoundary(reservationExists), hasData, hasValidProperties, bookedStatus, asyncErrorBoundary(updateRes)],
   create: [hasData, hasValidProperties, hasValidDate, hasValidTime, hasValidDay, timeNotPassed, asyncErrorBoundary(create)],
 };

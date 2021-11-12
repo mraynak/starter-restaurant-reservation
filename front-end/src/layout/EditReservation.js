@@ -1,55 +1,44 @@
-import React, {useState} from "react";
-import {useHistory} from "react-router-dom"
-import { today } from "../utils/date-time";
-import useQuery from "../utils/useQuery";
-import { createReservation } from "../utils/api"
+import React, {useState, useEffect} from "react";
+import {readReservation, editReservation} from "../utils/api"
+import {useHistory, useParams} from "react-router-dom"
 import ErrorAlert from "./ErrorAlert"
 
-function CreateReservation() {
-    const history = useHistory()
-    const query = useQuery()
-    const date = query.get("date") ? query.get("date") : today()
 
-    const initialFormState = {
-        first_name: "",
-        last_name: "",
-        mobile_number: "",
-        reservation_date: date,
-        reservation_time: "",
-        people: 1,
-        status: "booked"
-    }
-
-    const [formData, setFormData] = useState(initialFormState)
+function EditReservation() {
+    const [reservation, setReservation] = useState([])
     const [reservationError, setReservationError] = useState(null)
     const [peopleError, setPeopleError] = useState(null)
     const [dateError, setDateError] = useState(null)
     const [dayError, setDayError] = useState(null)
-    const [timeError, setTimeError] = useState(null)
+    // const [timeError, setTimeError] = useState(null)
     const [pastTimeError, setPastTimeError] = useState(null)
+    const [formData, setFormData] = useState({})
 
-    function submitHandler(event) {
-        event.preventDefault()
+    const history = useHistory()
+    const {reservation_id} = useParams()
+
+    useEffect(loadReservation, [reservation_id])
+
+    function loadReservation() {
         const abortController = new AbortController()
-        // const inputData = document.querySelectorAll('input')
-
-        // let data = getData(inputData)
-        // console.log(formData)
-        setTimeError(null)
-        createReservation(formData, abortController.signal)
-        .then(() => {history.push(`/dashboard?date=${formData["reservation_date"]}`)})
-        .catch(setReservationError)
+        setReservationError(null)
+        readReservation(reservation_id)
+            .then(setReservation)
+        readReservation(reservation_id)
+            .then(res => setFormData({
+                reservation_id: reservation_id,
+                first_name: res.first_name,
+                last_name: res.last_name,
+                mobile_number: res.mobile_number,
+                reservation_date: res.reservation_date,
+                reservation_time: res.reservation_time,
+                people: res.people,
+                status: res.status
+            }
+        ))
+            .catch(setReservationError)
+        return () => abortController.abort();
     }
-    // function getData(data) {
-    //     let returnedData = {}
-
-    //     data.forEach(({name, value}) => {
-    //         if(name === "people") {
-    //             return returnedData[name] = Number(value)
-    //         }
-    //         return returnedData[name] = value
-    //     })
-    // }
 
     function changeHandler({target}) {
         console.log(formData)
@@ -115,11 +104,34 @@ function CreateReservation() {
         });
     }
 
+    async function submitHandler(event) {
+        event.preventDefault()
+        const abortController = new AbortController()
+        editReservation(formData, abortController.signal)
+        .then(() => {history.push(`/dashboard?date=${reservation.reservation_date}`)})
+        // .then(history.go(0))
+        .catch(setReservationError)
+    }
+
+    
     return (
-        <>
         <div>
             <ErrorAlert error={reservationError} />
-            <h1>Create Reservation</h1>
+            <h1>Edit Reservation Number: {reservation_id}</h1>
+            <div className="card" style={{"width": "18rem"}} key={reservation_id}>
+                <div className="card-body">
+                    <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
+                    <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
+                    <p className="card-text">Reservation Date: {reservation.reservation_date}<br />
+                    Reservation Time: {reservation.reservation_time}<br />
+                    Amount of People: {reservation.people}</p>
+                    <p className="card-text" data-reservation-id-status={reservation.reservation_id}>Status: {reservation.status}</p>
+                    <div>
+                        {reservation.status === "booked" ? <a href={`/reservations/${reservation_id}/seat`} className="btn btn primary"><button type="submit" className="btn btn-primary p-1">Seat</button></a> : null}
+                        {/* <button type="Cancel" className="btn btn-danger p-1" data-reservation-id-cancel={reservation.reservation_id}>Cancel</button> */}
+                    </div>
+                </div>
+            </div>
             <form>
                 <div className="form-group">
                     <label className="form-label" htmlFor="first-name">First Name:</label>
@@ -130,7 +142,7 @@ function CreateReservation() {
                         name="first_name"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="First Name"
+                        placeholder={reservation.first_name}
                     />
                 </div>
                 <div className="form-group">
@@ -142,7 +154,7 @@ function CreateReservation() {
                         name="last_name"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="Last Name"
+                        placeholder={reservation.last_name}
                     />
                 </div>
                 <div className="form-group">
@@ -155,7 +167,7 @@ function CreateReservation() {
                         name="mobile_number"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="123-456-7890"
+                        placeholder={reservation.mobile_number}
                     />
                 </div>
                 <div className="form-group">
@@ -170,12 +182,12 @@ function CreateReservation() {
                         name="reservation_date"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="YYYY-MM-DD"
+                        placeholder={reservation.reservation_date}
                     />
                 </div>
                 <div className="form-group">
                     <label className="form-label" htmlFor="time">Reservation Time:</label>
-                    <ErrorAlert error={timeError} />
+                    {/* <ErrorAlert error={timeError} /> */}
                     <ErrorAlert error={pastTimeError} />
                     <input
                         type="time"
@@ -185,7 +197,7 @@ function CreateReservation() {
                         name="reservation_time"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="HH:MM"
+                        placeholder={reservation.reservation_time}
                     />
                 </div>
                 <div className="form-group">
@@ -198,15 +210,14 @@ function CreateReservation() {
                         name="people"
                         required={true}
                         onChange={changeHandler}
-                        placeholder="Number of People"
+                        placeholder={reservation.people}
                     />
                 </div>
                 <button type="submit" className="btn btn-primary" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </form>
         </div>
-        </>
     )
 }
 
-export default CreateReservation
+export default EditReservation

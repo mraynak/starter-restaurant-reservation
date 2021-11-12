@@ -1,20 +1,34 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 import {useHistory} from "react-router-dom"
 import { listReservationsByNumber } from "../utils/api";
 import Reservation from "../dashboard/Reservation";
 import ErrorAlert from "./ErrorAlert"
+import useQuery from "../utils/useQuery";
 
 function SearchByNumber(){
     const history = useHistory()
+    const query = useQuery()
+    const phone = query.get("mobile_number") ? query.get("mobile_number") : null
 
     const initialFormState = {
-        mobile_number: "",
+        mobile_number: phone,
     }
 
     const [numberError, setNumberError] = useState(null)
     const [reservations, setReservations] = useState([]);
     const [reservationsError, setReservationsError] = useState(null);
     const [formData, setFormData] = useState(initialFormState)
+
+    useEffect(loadReservations, [phone])
+
+    function loadReservations() {
+        const abortController = new AbortController()
+        setReservationsError(null)
+        listReservationsByNumber(formData.mobile_number)
+            .then(setReservations)
+            .catch(setReservationsError)
+        return () => abortController.abort();
+    }
 
     async function searchHandler(event) {
         setReservations([])

@@ -28,7 +28,7 @@ function Tables({tables, loadDashboard}) {
                     <h5 className="card-title">Table Name: {table.table_name}</h5>
                     <p className="card-subtitle">Capacity: {table.capacity}</p>
                     {table.reservation_id && <p className='card-subtitle mt-1'>Reservation ID: {table.reservation_id}</p>}
-                    <p data-table-id-status={table.table_id} className="mt-1">Availability: {table.reservation_id ? "Occupied" : "Free" }</p>
+                    <p data-table-id-status={table.table_id} className="mt-1">Availability: {table.reservation_id ? "occupied" : "free" }</p>
                 </div>
                 <button id={table.table_id} className="btn btn-danger m-3" data-table-id-finish={table.table_id} onClick={completeRes}>Finish</button>
             </div>

@@ -66,8 +66,15 @@ function hasData(req, res, next) {
 
   function hasValidProperties(req, res, next) {
     const {table_name, capacity, reservation_id} = res.locals.data
-    console.log(res.locals.data)
-    // const newCapacity = JSON.parse(capacity)
+    // console.log(res.locals.data)
+    console.log(typeof capacity)
+    
+    if(!table_name || !table_name.length || table_name.length < 2) {
+        return next({status: 400, message: "table_name is required for reservation"})
+    }
+    if(!capacity || capacity === 0) {
+        return next({status: 400, message: "Table capacity is missing or invalid"})
+    }
     if(reservation_id) {
         const table = {
             table_name: table_name,
@@ -76,12 +83,6 @@ function hasData(req, res, next) {
             occupied: true,
         }
         res.locals.data = table
-    }
-    if(!table_name || !table_name.length || table_name.length < 2) {
-        return next({status: 400, message: "table_name is required for reservation"})
-    }
-    if(!capacity || capacity === 0) {
-        return next({status: 400, message: "Table capacity is missing or invalid"})
     }
     
     return next()

@@ -59,6 +59,10 @@ function SeatReservation() {
                     <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
                     <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
                     <p className="card-text">Amount of People: {reservation.people}</p>
+                    <div>
+                        <a href={`/reservations/${reservation_id}/edit`} className="btn btn primary"><button type="Edit" className="btn btn-secondary p-1">Edit</button></a>
+                        {/* <button type="Cancel" className="btn btn-danger" data-reservation-id-cancel={reservation.reservation_id}>Cancel</button> */}
+                    </div>
                 </div>
             </div>
             <div className="form-group">
