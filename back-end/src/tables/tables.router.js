@@ -8,14 +8,6 @@ router
     .get(controller.list)
     .all(methodNotAllowed);
 
-//   ---------------------------------------------------------------------
-
-// router
-//     .route("/:table_id")
-//     .get(controller.read)
-//     .put(controller.update)
-//     .all(methodNotAllowed)
-
 router
     .route("/:table_id/seat")
     .delete(controller.destroy)

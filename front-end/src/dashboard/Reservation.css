@@ -1,0 +1,28 @@
+.card-body, button {
+    font-family: 'Arima Madurai', serif;
+}
+
+.card {
+    border-radius: 5%;
+    background: url("../images/white_background.jpeg");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+label {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: black;
+    border-radius: 25px;
+}
+
+input {
+    width:5px
+}
+
+
+
+
+

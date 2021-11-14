@@ -10,7 +10,7 @@ function EditReservation() {
     const [peopleError, setPeopleError] = useState(null)
     const [dateError, setDateError] = useState(null)
     const [dayError, setDayError] = useState(null)
-    // const [timeError, setTimeError] = useState(null)
+    const [timeError, setTimeError] = useState(null)
     const [pastTimeError, setPastTimeError] = useState(null)
     const [formData, setFormData] = useState({})
 
@@ -41,7 +41,6 @@ function EditReservation() {
     }
 
     function changeHandler({target}) {
-        console.log(formData)
         if(target.name === "reservation_date") {
             const resDate = Date.parse(target.value) + 77400000
             const resDay = new Date(target.value).getDay()
@@ -64,7 +63,6 @@ function EditReservation() {
             }
         }
         if(target.name === "reservation_time") {
-            console.log(target.value)
             const data = document.querySelector("input[name='reservation_date']")
             const value = data.value
             const parseTime = Date.parse(value)
@@ -112,18 +110,32 @@ function EditReservation() {
 
     async function submitHandler(event) {
         event.preventDefault()
+        setTimeError(null)
         const abortController = new AbortController()
         editReservation(formData, abortController.signal)
         .then(() => {history.push(`/dashboard?date=${reservation.reservation_date}`)})
-        // .then(history.go(0))
         .catch(setReservationError)
     }
 
-    
+    function coloredText(status) {
+        if(status === "booked") {
+            return <span className="text-primary font-weight-bold">{status}</span>
+        }
+        if(status === "seated") {
+            return <span className="text-secondary font-weight-bold">{status}</span>
+        }
+        if(status === "cancelled") {
+            return <span className="text-danger font-weight-bold">{status}</span>
+        }
+        if(status === "finished") {
+            return <span className="text-success font-weight-bold">{status}</span>
+        }
+    }
+
     return (
         <div>
             <ErrorAlert error={reservationError} />
-            <h1>Edit Reservation Number: {reservation_id}</h1>
+            <h1 className="mt-3">Edit Reservation Number: {reservation_id}</h1>
             <div className="card" style={{"width": "18rem"}} key={reservation_id}>
                 <div className="card-body">
                     <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
@@ -131,17 +143,18 @@ function EditReservation() {
                     <p className="card-text">Reservation Date: {reservation.reservation_date}<br />
                     Reservation Time: {reservation.reservation_time}<br />
                     Amount of People: {reservation.people}</p>
-                    <p className="card-text" data-reservation-id-status={reservation.reservation_id}>Status: {reservation.status}</p>
+                    <p className="card-text" data-reservation-id-status={reservation.reservation_id}>Status: {coloredText(reservation.status)}</p>
                     <div>
-                        {reservation.status === "booked" ? <a href={`/reservations/${reservation_id}/seat`} className="btn btn primary"><button type="submit" className="btn btn-primary p-1">Seat</button></a> : null}
-                        {/* <button type="Cancel" className="btn btn-danger p-1" data-reservation-id-cancel={reservation.reservation_id}>Cancel</button> */}
+                        {reservation.status === "booked" ? <a href={`/reservations/${reservation_id}/seat`}><button type="submit" className="btn btn-primary m-2">Seat</button></a> : null}
                     </div>
                 </div>
             </div>
+            <h4 className= "mt-3">Edit Fields:</h4>
             <form>
                 <div className="form-group">
                     <label className="form-label" htmlFor="first-name">First Name:</label>
                     <input
+                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -154,6 +167,7 @@ function EditReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="last-name">Last Name:</label>
                     <input
+                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -166,6 +180,7 @@ function EditReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="modile-number">Phone Number:</label>
                     <input
+                        style={{"width": "400px"}}
                         type="tel"
                         pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         className="form-control"
@@ -181,6 +196,7 @@ function EditReservation() {
                     <ErrorAlert error={dateError} />
                     <ErrorAlert error={dayError} />
                     <input
+                        style={{"width": "400px"}}
                         type="date"
                         pattern="\d{4}-\d{2}-\d{2}"
                         className="form-control"
@@ -193,9 +209,10 @@ function EditReservation() {
                 </div>
                 <div className="form-group">
                     <label className="form-label" htmlFor="time">Reservation Time:</label>
-                    {/* <ErrorAlert error={timeError} /> */}
+                    <ErrorAlert error={timeError} />
                     <ErrorAlert error={pastTimeError} />
                     <input
+                        style={{"width": "400px"}}
                         type="time"
                         pattern="[0-9]{2}:[0-9]{2}"
                         className="form-control"
@@ -210,6 +227,7 @@ function EditReservation() {
                     <label className="form-label" htmlFor="people">Number of People:</label>
                     <ErrorAlert error={peopleError} />
                     <input
+                        style={{"width": "400px"}}
                         type="number"
                         className="form-control"
                         id="form-input"
@@ -219,7 +237,7 @@ function EditReservation() {
                         placeholder={reservation.people}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary" onClick={submitHandler}>Submit</button>
+                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </form>
         </div>

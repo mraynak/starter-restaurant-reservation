@@ -8,11 +8,8 @@ async function create(req, res) {
   const data = await reservationsService.create(req.body.data)
   res.status(201).json({ data: data })
 }
-/**
- * List handler for reservation resources
- */
+
 async function list(req, res) {
-  // console.log(res.locals.data)
   res.json({data: res.locals.data})
 }
 
@@ -22,7 +19,6 @@ function read(req, res) {
 
 async function update(req, res, next) {
   const status = res.locals.status
-  // console.log(status)
   res.json({data: await reservationsService.update(res.locals.reservation.reservation_id, status )})
 }
 
@@ -34,12 +30,10 @@ async function updateRes(req, res, next) {
 
 async function dateQuery(req, res, next) {
   const {date, mobile_number} = req.query
-  console.log(mobile_number)
 
   if(!date) {
     if(!mobile_number || mobile_number.length === 0) {return next({status: 400, message: "No phone number specified"})}
     const data = await reservationsService.search(mobile_number)
-    // if(!data || data.length === 0) {return next({status: 404, message: "No reservations found"})}
 
     res.locals.data = data
   }
@@ -60,7 +54,6 @@ async function dateQuery(req, res, next) {
 
 function hasData(req, res, next) {
   const {data} = req.body
-  console.log(data)
   if(!data) {
     return next({
       status: 400, 
@@ -83,7 +76,6 @@ function hasValidDate(req, res, next) {
 
 function hasValidTime(req, res, next) {
   const {reservation_time} = res.locals
-  console.log(typeof reservation_time)
   if(reservation_time < "10:30" || reservation_time > "21:30") {
     return next({
       status: 400,
@@ -109,7 +101,6 @@ function timeNotPassed(req, res, next) {
 function hasValidDay(req, res, next) {
   const {reservation_date} = res.locals
   const actualDay = new Date(reservation_date).getDay()
-  // console.log(actualDay)
   if(actualDay + 1 === 2) {
     return next({
       status: 400,
@@ -130,7 +121,6 @@ function hasValidProperties(req, res, next) {
     status,
   } = req.body.data
   const reservationDate = new Date(reservation_date)
-  console.log(req.body.data)
   
 
   if(!first_name || first_name.length === 0) {return next({status: 400, message: "first_name is required for reservation"})}
@@ -172,7 +162,6 @@ function hasValidProperties(req, res, next) {
 
 async function reservationExists(req, res, next) {
   const {reservation_id} = req.params
-  console.log(reservation_id)
   const reservation = await reservationsService.read(reservation_id)
 
   if(reservation) {
@@ -193,7 +182,6 @@ const VALID_STATUS = [
 ]
 function validStatus(req, res, next) {
   const {status} = req.body.data
-  console.log(status)
 
   if(!VALID_STATUS.includes(status)) {
     return next({
@@ -213,7 +201,6 @@ function validStatus(req, res, next) {
 
 function bookedStatus(req, res, next) {
   const {status} = req.body.data
-  console.log(status)
 
   if(res.locals.reservation.status !== "booked") {
     return next({

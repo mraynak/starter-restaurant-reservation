@@ -29,8 +29,6 @@ async function update(req, res, next) {
 }
 
 async function destroy(req, res, next) {
-    // console.log(res.locals.tableData.reservation_id)
-    // tablesService.setStatus(res.locals.tableData.reservation_id, "finished")
     const data = {
         table_id: res.locals.table_id,
         table_name: res.locals.tableData.table_name,
@@ -40,13 +38,6 @@ async function destroy(req, res, next) {
     }
     res.json({data: await tablesService.update(data)})
 }
-
-// function finishedStatus(req, res, next) {
-//     const reservation_id = res.locals.tableData.reservation_id
-//     console.log(reservation_id)
-//     tablesService.setStatus(reservation_id, "finished")
-//     return next()
-// }
 
   
 //Validators
@@ -66,8 +57,6 @@ function hasData(req, res, next) {
 
   function hasValidProperties(req, res, next) {
     const {table_name, capacity, reservation_id} = res.locals.data
-    // console.log(res.locals.data)
-    console.log(typeof capacity)
     
     if(!table_name || !table_name.length || table_name.length < 2) {
         return next({status: 400, message: "table_name is required for reservation"})
@@ -155,7 +144,6 @@ function hasData(req, res, next) {
   }
 
   function isOccupied(req, res, next) {
-    //   console.log(res.locals.tableData.occupied)
       if(res.locals.tableData.occupied) {
           return next({
               status: 400,
@@ -166,8 +154,6 @@ function hasData(req, res, next) {
   }
 
   async function isNotOccupied(req, res, next) {
-    //   console.log(res.locals.tableData.occupied)
-    //   console.log(res.locals.tableData.reservation_id)
     if(!res.locals.tableData.occupied) {
         return next({
             status: 400,

@@ -27,7 +27,6 @@ function SeatReservation() {
 
     async function submitHandler(event) {
         event.preventDefault()
-        // console.log(reservation_id)
         const abortController = new AbortController()
         setErrors(null)
 
@@ -48,26 +47,42 @@ function SeatReservation() {
         }
     }
 
+    function coloredText(status) {
+        if(status === "booked") {
+            return <span className="text-primary font-weight-bold">{status}</span>
+        }
+        if(status === "seated") {
+            return <span className="text-secondary font-weight-bold">{status}</span>
+        }
+        if(status === "cancelled") {
+            return <span className="text-danger font-weight-bold">{status}</span>
+        }
+        if(status === "finished") {
+            return <span className="text-success font-weight-bold">{status}</span>
+        }
+    }
+
     return (
         <div>
-            {/* {JSON.stringify(reservation)} */}
             <ErrorAlert error={reservationError} />
             <ErrorAlert error={errors} />
-            <h1>Seat Reservation Number: {reservation_id}</h1>
+            <h1 className="mt-3">Seat Reservation Number: {reservation_id}</h1>
             <div className="card" style={{"width": "18rem"}} key={reservation_id}>
                 <div className="card-body">
                     <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
                     <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
-                    <p className="card-text">Amount of People: {reservation.people}</p>
+                    <p className="card-text">Reservation Date: {reservation.reservation_date}<br />
+                    Reservation Time: {reservation.reservation_time}<br />
+                    Amount of People: {reservation.people}</p>
+                    <p className="card-text" data-reservation-id-status={reservation.reservation_id}>Status: {coloredText(reservation.status)}</p>
                     <div>
-                        <a href={`/reservations/${reservation_id}/edit`} className="btn btn primary"><button type="Edit" className="btn btn-secondary p-1">Edit</button></a>
-                        {/* <button type="Cancel" className="btn btn-danger" data-reservation-id-cancel={reservation.reservation_id}>Cancel</button> */}
+                        <a href={`/reservations/${reservation_id}/edit`}><button type="Edit" className="btn btn-secondary m-2">Edit</button></a>
                     </div>
                 </div>
             </div>
-            <div className="form-group">
-                <label>Table</label>
-                <select name="table_id" className="form-control">
+            <div className="form-group mt-3">
+                <h4>Tables:</h4>
+                <select name="table_id" className="form-control" style={{"width": "400px"}}>
                     {(tables.map((table) => {
                         // if(table.capacity >= reservation.people) {
                             return <option key={table.table_name} id={table.table_id}>{table.table_name} - {table.capacity}</option>
@@ -76,7 +91,7 @@ function SeatReservation() {
                         }
                     ))}
                 </select>
-                <button type="submit" className="btn btn-primary" onClick={submitHandler}>Submit</button>
+                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </div>
         </div>

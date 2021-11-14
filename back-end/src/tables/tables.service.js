@@ -13,8 +13,6 @@ function create(table) {
         .then((updatedRecords) => updatedRecords[0])
 }
 
-// ---------------------------------------------------------------------
-
 function update(updatedTable) {
     return knex("tables")
         .select("*")
@@ -36,8 +34,6 @@ function read(table_id) {
         .where({"table_id": table_id})
         .first()
 }
-
-// ---------------------------------------------------------------------
 
 module.exports = {
     list,

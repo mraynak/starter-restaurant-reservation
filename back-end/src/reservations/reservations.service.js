@@ -43,8 +43,7 @@ function search(mobile_number) {
       .whereRaw(
         "translate(mobile_number, '() -', '') like ?",
         `%${mobile_number.replace(/\D/g, "")}%`
-      )
-    //   .where({"mobile_number": mobile_number})  
+      )  
       .orderBy("reservation_date");
   }
 
