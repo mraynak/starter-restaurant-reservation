@@ -115,7 +115,6 @@ function CreateReservation() {
                 <div className="form-group col-xs-3">
                     <label className="form-label" htmlFor="first-name">First Name:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -128,7 +127,6 @@ function CreateReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="last-name">Last Name:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -141,7 +139,6 @@ function CreateReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="modile-number">Phone Number:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="tel"
                         pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         className="form-control"
@@ -157,7 +154,6 @@ function CreateReservation() {
                     <ErrorAlert error={dateError} />
                     <ErrorAlert error={dayError} />
                     <input
-                        style={{"width": "400px"}}
                         type="date"
                         pattern="\d{4}-\d{2}-\d{2}"
                         className="form-control"
@@ -173,7 +169,6 @@ function CreateReservation() {
                     <ErrorAlert error={timeError} />
                     <ErrorAlert error={pastTimeError} />
                     <input
-                        style={{"width": "400px"}}
                         type="time"
                         pattern="[0-9]{2}:[0-9]{2}"
                         className="form-control"
@@ -188,7 +183,6 @@ function CreateReservation() {
                     <label className="form-label" htmlFor="people">Number of People:</label>
                     <ErrorAlert error={peopleError} />
                     <input
-                        style={{"width": "400px"}}
                         type="number"
                         className="form-control"
                         id="form-input"
@@ -198,8 +192,10 @@ function CreateReservation() {
                         placeholder="Number of People"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
+                <div className="mb-3">
+                <button type="submit" className="btn btn-primary submit_button" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
+                </div>
             </form>
         </div>
         </>

@@ -136,7 +136,7 @@ function EditReservation() {
         <div>
             <ErrorAlert error={reservationError} />
             <h1 className="mt-3">Edit Reservation Number: {reservation_id}</h1>
-            <div className="card" style={{"width": "18rem"}} key={reservation_id}>
+            <div className="card ml-4 mt-3" style={{"width": "18rem"}} key={reservation_id}>
                 <div className="card-body">
                     <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
                     <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
@@ -154,7 +154,6 @@ function EditReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="first-name">First Name:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -167,7 +166,6 @@ function EditReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="last-name">Last Name:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -180,7 +178,6 @@ function EditReservation() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="modile-number">Phone Number:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="tel"
                         pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                         className="form-control"
@@ -196,7 +193,6 @@ function EditReservation() {
                     <ErrorAlert error={dateError} />
                     <ErrorAlert error={dayError} />
                     <input
-                        style={{"width": "400px"}}
                         type="date"
                         pattern="\d{4}-\d{2}-\d{2}"
                         className="form-control"
@@ -212,7 +208,6 @@ function EditReservation() {
                     <ErrorAlert error={timeError} />
                     <ErrorAlert error={pastTimeError} />
                     <input
-                        style={{"width": "400px"}}
                         type="time"
                         pattern="[0-9]{2}:[0-9]{2}"
                         className="form-control"
@@ -227,7 +222,6 @@ function EditReservation() {
                     <label className="form-label" htmlFor="people">Number of People:</label>
                     <ErrorAlert error={peopleError} />
                     <input
-                        style={{"width": "400px"}}
                         type="number"
                         className="form-control"
                         id="form-input"
@@ -237,8 +231,10 @@ function EditReservation() {
                         placeholder={reservation.people}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
+                <div className="mb-3">
+                <button type="submit" className="btn btn-primary submit_button" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
+                </div>
             </form>
         </div>
     )

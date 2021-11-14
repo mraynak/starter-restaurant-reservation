@@ -61,12 +61,12 @@ function SearchByNumber(){
         <div>
             <ErrorAlert error={reservationsError} />
             <h1 className="mt-3">Search</h1>
+            <h4>Enter a partial or full number</h4>
             <form>
                 <div className="form-group">
                     <label className="form-label" htmlFor="mobile_number">Mobile Number:</label>
                     <ErrorAlert error={numberError} />
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -76,10 +76,10 @@ function SearchByNumber(){
                         placeholder="Enter a customer's phone number"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary m-2"onClick={searchHandler}>Find</button>
+                <button type="submit" className="btn btn-primary submit_button"onClick={searchHandler}>Find</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </form>
-            <h4 className= "m-2">Reservations:</h4>
+            <h4 className="mt-3">Reservations:</h4>
             {reservations.length === 0 && <ErrorAlert error={{message: 'No reservations found'}} />}
             <div className="m-3">
                 <div className="row">

@@ -67,7 +67,7 @@ function SeatReservation() {
             <ErrorAlert error={reservationError} />
             <ErrorAlert error={errors} />
             <h1 className="mt-3">Seat Reservation Number: {reservation_id}</h1>
-            <div className="card" style={{"width": "18rem"}} key={reservation_id}>
+            <div className="card ml-4 mt-3" style={{"width": "18rem"}} key={reservation_id}>
                 <div className="card-body">
                     <h5 className="card-title">Name: {reservation.first_name} {reservation.last_name}</h5>
                     <h6 className="card-subtitle">Mobile Number: {reservation.mobile_number}</h6>
@@ -80,9 +80,9 @@ function SeatReservation() {
                     </div>
                 </div>
             </div>
+            <h4 className="mt-3">Tables:</h4>
             <div className="form-group mt-3">
-                <h4>Tables:</h4>
-                <select name="table_id" className="form-control" style={{"width": "400px"}}>
+                <select name="table_id" className="form-control">
                     {(tables.map((table) => {
                         // if(table.capacity >= reservation.people) {
                             return <option key={table.table_name} id={table.table_id}>{table.table_name} - {table.capacity}</option>
@@ -91,7 +91,9 @@ function SeatReservation() {
                         }
                     ))}
                 </select>
-                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
+            </div>
+            <div className="mb-3">
+                <button type="submit" className="btn btn-primary submit_button" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </div>
         </div>

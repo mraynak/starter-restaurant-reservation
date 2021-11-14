@@ -70,7 +70,6 @@ function CreateTable() {
                 <div className="form-group">
                     <label className="form-label" htmlFor="table-name">Table Name:</label>
                     <input
-                        style={{"width": "400px"}}
                         type="text"
                         className="form-control"
                         id="form-input"
@@ -84,7 +83,6 @@ function CreateTable() {
                     <label className="form-label" htmlFor="capacity">Capacity:</label>
                     <ErrorAlert error={capacityError} />
                     <input
-                        style={{"width": "400px"}}
                         type="number"
                         className="form-control"
                         id="form-input"
@@ -94,10 +92,10 @@ function CreateTable() {
                         placeholder="Capacity"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary m-2" onClick={submitHandler}>Submit</button>
+                <button type="submit" className="btn btn-primary submit_button" onClick={submitHandler}>Submit</button>
                 <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
             </form>
-            <div className="d-md-flex mb-3 mt-3">
+            <div className="d-md-flex mt-3">
                 <h4 className="mb-0">Tables:</h4>
             </div>
             <div className="m-3">
