@@ -3,60 +3,60 @@
 ## Live link to deployed project
 
 ## API Documentation
-Codes:
+### Codes:
 
-200: Success
-201: Create successfully
-400: Bad request
-404: Not found
-500: server error
+200: Success  
+201: Create successfully  
+400: Bad request  
+404: Not found  
+500: server error  
 
 ### GET:
-listReservations API:
-Path: /reservations
-Lists all reservations based on date
+listReservations API:  
+Path: /reservations  
+Lists all reservations based on date  
 
-listTables API:
+listTables API:  
 Path: /tables
 Lists all tables
 
-listReservationsByNumber API:
-Path: /reservations?mobile_number=${mobile_number}
-Lists all tables based on mobile_number
+listReservationsByNumber API:  
+Path: /reservations?mobile_number=${mobile_number}  
+Lists all tables based on mobile_number  
 
-readReservation API:
-Path: /reservations/${reservation_id}
-Lists a single reservation based on reservation_id
+readReservation API:  
+Path: /reservations/${reservation_id}  
+Lists a single reservation based on reservation_id  
 
 ### POST
 
-createReservation API:
-Path: /reservations
-Creates a new reservation
+createReservation API:  
+Path: /reservations  
+Creates a new reservation  
 
-createTable API:
-Path: /tables
-Creates a new table
+createTable API:  
+Path: /tables  
+Creates a new table  
 
 ### PUT
 
-seatReservation:
-Path: /tables/${table_id}/seat
-Edits table to add reservation_id
+seatReservation:  
+Path: /tables/${table_id}/seat  
+Edits table to add reservation_id  
 
-setStatus:
-Path: /reservations/${reservation_id}/status
-Sets reservation status
+setStatus:  
+Path: /reservations/${reservation_id}/status  
+Sets reservation status  
 
-editReservation:
-Path: /reservations/${data.reservation_id}
-Edits all desired fields of a reservation
+editReservation:  
+Path: /reservations/${data.reservation_id}  
+Edits all desired fields of a reservation  
 
 ### DELETE
 
-finishReservation:
-Path: /tables/${table_id}/seat
-Edits table to delete reservation_id
+finishReservation:  
+Path: /tables/${table_id}/seat  
+Edits table to delete reservation_id  
 
 ## Summary
 
