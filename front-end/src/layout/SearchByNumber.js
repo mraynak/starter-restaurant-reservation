@@ -25,7 +25,7 @@ function SearchByNumber(){
 
 
     //displays reservations and rerenders in the query in the url changes
-    useEffect(loadReservations, [phone])
+    useEffect(loadReservations, [phone, formData])
 
     function loadReservations() {
         const abortController = new AbortController()

@@ -89,10 +89,7 @@ function SeatReservation() {
             <div className="form-group mt-3">
                 <select name="table_id" className="form-control">
                     {(tables.map((table) => {
-                        // if(table.capacity >= reservation.people) {
                             return <option key={table.table_name} id={table.table_id}>{table.table_name} - {table.capacity}</option>
-                            // }
-                            // return null
                         }
                     ))}
                 </select>

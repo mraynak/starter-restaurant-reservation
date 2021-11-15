@@ -81,14 +81,6 @@ function CreateReservation() {
             if(resTime >= time) {
                 setPastTimeError(null)
             }
-            // if(target.value < "10:30" || target.value > "21:30") {
-            //     setTimeError({
-            //         message: `Reservation time must be after 10:30am and before 9:30pm as we are close or time is too close to closing`
-            //     })
-            // }
-            // if(target.value >= "10:30" && target.value <= "21:30") {
-            //     setTimeError(null)
-            // }
         }
         if(target.name === "people") {
             if(target.value < 1) {
