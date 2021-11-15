@@ -112,11 +112,16 @@ To seed original data navigate to the backend folder and run:
 npx knex seed:run  
 
 Using your own database:
-Update the backend env file. /backend-end/.env with your own url database.
+Update the backend env file. /backend-end/.env with your own url database.  
+
 Run:  
-npx knex migrate:latest  
+
+npx knex migrate:latest 
+
 Then run:   
+
 npx knex seed:run
 
 To run locally run:  
+
 npm run start:dev
