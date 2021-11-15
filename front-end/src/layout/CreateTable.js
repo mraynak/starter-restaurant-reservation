@@ -9,16 +9,19 @@ import Tables from "../dashboard/Tables"
 function CreateTable() {
     const history = useHistory()
 
+    //set initial form state to empty
     const initialFormState = {
         table_name: "",
         capacity: ""
     }
-
+    
+    //sets state variables
     const [formData, setFormData] = useState(initialFormState)
     const [reservationError, setReservationError] = useState(null)
     const [capacityError, setCapacityError] = useState(null)
     const [tables, setTables] = useState([])
 
+    //button click handler to add new table to database
     function submitHandler(event) {
         event.preventDefault()
         const abortController = new AbortController()
@@ -28,6 +31,7 @@ function CreateTable() {
         .catch(setReservationError)
     }
 
+    //recognize changes and set form data to new changes also sets errors if fields contain invalid data
     function changeHandler({target}) {
         if(target.name === "capacity") {
             if(target.value < 1) {
@@ -51,6 +55,7 @@ function CreateTable() {
         }
     }
 
+    //lists all existing tables
     useEffect(loadDashboard, []);
 
     function loadDashboard() {

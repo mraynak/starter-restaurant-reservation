@@ -4,30 +4,36 @@ const validTime = require("../errors/validTime")
 
 //Handlers
 
+//creates a new reservation
 async function create(req, res) {
   const data = await reservationsService.create(req.body.data)
   res.status(201).json({ data: data })
 }
 
+//lists existing reservations given certian criteria
 async function list(req, res) {
   res.json({data: res.locals.data})
 }
 
+//lists a single reservation based on reservation_id
 function read(req, res) {
   res.json({data: res.locals.reservation})
 }
 
+//updates the status of a reservation
 async function update(req, res, next) {
   const status = res.locals.status
   res.json({data: await reservationsService.update(res.locals.reservation.reservation_id, status )})
 }
 
+//updates any or all fields of a reservtion 
 async function updateRes(req, res, next) {
   res.json({data: await reservationsService.updateRes(res.locals.data)})
 }
 
 //Validators
 
+//given a number or date query sends errors if non existent or sets res.locals.data to aquired data given the query
 async function dateQuery(req, res, next) {
   const {date, mobile_number} = req.query
 
@@ -52,6 +58,7 @@ async function dateQuery(req, res, next) {
   return next()
 }
 
+//confirms the request has data
 function hasData(req, res, next) {
   const {data} = req.body
   if(!data) {
@@ -63,6 +70,7 @@ function hasData(req, res, next) {
   return next()
 }
 
+//confirms the entered date has not passed 
 function hasValidDate(req, res, next) {
   const {reservation_date} = res.locals
   if((Date.parse(reservation_date) + 77400000) < Date.now() - 25200000) {
@@ -74,6 +82,7 @@ function hasValidDate(req, res, next) {
   return next()
 }
 
+//confirms the time is within the window to make reservations
 function hasValidTime(req, res, next) {
   const {reservation_time} = res.locals
   if(reservation_time < "10:30" || reservation_time > "21:30") {
@@ -84,6 +93,8 @@ function hasValidTime(req, res, next) {
   }
   return next()
 }
+
+//confirms the entered time has not already passed
 function timeNotPassed(req, res, next) {
   const {reservation_time, reservation_date} = res.locals
   const parseTime = Date.parse(reservation_date)
@@ -98,6 +109,7 @@ function timeNotPassed(req, res, next) {
   next()
 }
 
+//confirms the given day is not a Tuesday
 function hasValidDay(req, res, next) {
   const {reservation_date} = res.locals
   const actualDay = new Date(reservation_date).getDay()
@@ -110,6 +122,7 @@ function hasValidDay(req, res, next) {
   next()
 }
 
+//confirms the fields in the given data are valid 
 function hasValidProperties(req, res, next) {
   const {
     first_name,
@@ -160,6 +173,7 @@ function hasValidProperties(req, res, next) {
   return next()
 }
 
+//confirms that the reservation exists givent the reservation_id
 async function reservationExists(req, res, next) {
   const {reservation_id} = req.params
   const reservation = await reservationsService.read(reservation_id)
@@ -180,6 +194,8 @@ const VALID_STATUS = [
   "finished",
   "cancelled"
 ]
+
+// confirms that the status is booked, seated, finished, or cancelled
 function validStatus(req, res, next) {
   const {status} = req.body.data
 
@@ -199,6 +215,7 @@ function validStatus(req, res, next) {
   return next()
 }
 
+//confirms the status is booked
 function bookedStatus(req, res, next) {
   const {status} = req.body.data
 

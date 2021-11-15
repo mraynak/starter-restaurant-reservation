@@ -4,6 +4,8 @@ import {useHistory, useParams} from "react-router-dom"
 import ErrorAlert from "./ErrorAlert"
 
 function SeatReservation() {
+
+    //set state variables
     const [tables, setTables] = useState([])
     const [reservation, setReservation] = useState([])
     const [errors, setErrors] = useState(null)
@@ -11,6 +13,7 @@ function SeatReservation() {
     const history = useHistory()
     const {reservation_id} = useParams()
 
+    //loads reservation being sat and tables to seat at rerenders if the reservation_id changes
     useEffect(loadTablesAndReservation, [reservation_id])
 
     function loadTablesAndReservation() {
@@ -25,6 +28,7 @@ function SeatReservation() {
         return () => abortController.abort();
     }
 
+    //submit button click handler to update reservation and table when sat
     async function submitHandler(event) {
         event.preventDefault()
         const abortController = new AbortController()
@@ -47,6 +51,7 @@ function SeatReservation() {
         }
     }
 
+    //conditional rendering to set status color
     function coloredText(status) {
         if(status === "booked") {
             return <span className="text-primary font-weight-bold">{status}</span>

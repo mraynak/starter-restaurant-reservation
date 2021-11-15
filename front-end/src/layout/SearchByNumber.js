@@ -8,17 +8,23 @@ import useQuery from "../utils/useQuery";
 function SearchByNumber(){
     const history = useHistory()
     const query = useQuery()
+
+    //sets phone to existing query in the url
     const phone = query.get("mobile_number") ? query.get("mobile_number") : null
 
+    //sets intial form state to existing url query if it exists
     const initialFormState = {
         mobile_number: phone,
     }
 
+    //set state variables
     const [numberError, setNumberError] = useState(null)
     const [reservations, setReservations] = useState([]);
     const [reservationsError, setReservationsError] = useState(null);
     const [formData, setFormData] = useState(initialFormState)
 
+
+    //displays reservations and rerenders in the query in the url changes
     useEffect(loadReservations, [phone])
 
     function loadReservations() {
@@ -30,6 +36,7 @@ function SearchByNumber(){
         return () => abortController.abort();
     }
 
+    //search button click handler displays numbers matching the input number
     async function searchHandler(event) {
         setReservations([])
         event.preventDefault()
@@ -41,6 +48,7 @@ function SearchByNumber(){
             .catch(setReservationsError)
     }
 
+    //recognize changes and set form data to new changes also sets errors if fields contain invalid data
     function changeHandler({target}) {
         if(target.name === "mobile_number") {
             if(target.value.length < 1 ) {

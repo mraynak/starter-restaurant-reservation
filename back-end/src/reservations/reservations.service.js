@@ -1,5 +1,6 @@
 const knex = require("../db/connection");
 
+//list functions
 function listByDate(date) {
     return knex("reservations")
         .where({"reservation_date": date})
@@ -8,6 +9,16 @@ function listByDate(date) {
         .orderBy("reservation_time")
 }
 
+function search(mobile_number) {
+    return knex("reservations")
+      .whereRaw(
+        "translate(mobile_number, '() -', '') like ?",
+        `%${mobile_number.replace(/\D/g, "")}%`
+      )  
+      .orderBy("reservation_date");
+  }
+
+//create function
 function create(reservation) {
     return knex("reservations")
         .insert(reservation)
@@ -15,6 +26,7 @@ function create(reservation) {
         .then((updatedRecords) => updatedRecords[0])
 }
 
+//read function
 function read(reservation_id) {
     return knex("reservations")
         .select("*")
@@ -22,6 +34,7 @@ function read(reservation_id) {
         .first()
 }
 
+//update functions
 function updateRes(data) {
     return knex("reservations")
         .where({"reservation_id": data.reservation_id})
@@ -37,15 +50,6 @@ function update(id, status) {
         .returning("*")
         .then((updatedRecords) => updatedRecords[0])
 }
-
-function search(mobile_number) {
-    return knex("reservations")
-      .whereRaw(
-        "translate(mobile_number, '() -', '') like ?",
-        `%${mobile_number.replace(/\D/g, "")}%`
-      )  
-      .orderBy("reservation_date");
-  }
 
 module.exports = {
     read,

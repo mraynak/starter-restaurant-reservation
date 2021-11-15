@@ -13,13 +13,16 @@ import Tables from "./Tables"
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+  //sets state variables to be used
   const [reservations, setReservations] = useState([]);
   const [tables, setTables] = useState([])
   const [reservationsError, setReservationsError] = useState(null);
   const history = useHistory()
 
+  //loads the dashboard and rerenders when date changes
   useEffect(loadDashboard, [date]);
 
+  //gets tables and reservations based on date
   function loadDashboard() {
     setReservations([])
     setTables([])

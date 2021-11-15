@@ -4,24 +4,30 @@ import {setStatus} from "../utils/api"
 import "./Reservation.css";
 
 function Reservation({reservations, loadDashboard}) {
-    
+
+    //map reservations and assign to a variable
     const cards = reservations.map((reservation) => {
+
+        //button click handler for cancelling reservation
         function cancelReservation(event) {
             event.preventDefault()
     
             const abortController = new AbortController()
-    
+            
+            //confirmation window
             if (window.confirm('Do you want to cancel this reservation? This cannot be undone.')) {
                 const data = {
                     reservation_id: reservation.reservation_id,
                     status: "cancelled"
                 }
                 
+                //setting reservation status
                 setStatus(data, reservation.reservation_id, abortController.signal)
                     .then(loadDashboard)
             }
         }
 
+        //conditional rendering to set status color
         function coloredText(status) {
             if(status === "booked") {
                 return <span className="text-primary font-weight-bold">{status}</span>

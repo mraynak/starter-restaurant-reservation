@@ -6,11 +6,15 @@ import image_table_bar from "../images/image_table_bar.jpeg"
 
 function Tables({tables, loadDashboard}) {
 
+    //sets error state varibale
     const [error, setError] = useState(null)
+
+    //button click handler for finishing a reservation
     async function completeRes(event) {
         event.preventDefault()
         const abortController = new AbortController()
 
+        //confrimation window
         if(window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
             await finishReservation(event.target.id, abortController.signal)
             .catch(setError)

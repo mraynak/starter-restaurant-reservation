@@ -5,6 +5,8 @@ import ErrorAlert from "./ErrorAlert"
 
 
 function EditReservation() {
+
+    //set state variables 
     const [reservation, setReservation] = useState([])
     const [reservationError, setReservationError] = useState(null)
     const [peopleError, setPeopleError] = useState(null)
@@ -17,6 +19,7 @@ function EditReservation() {
     const history = useHistory()
     const {reservation_id} = useParams()
 
+    //loads reservation being edited
     useEffect(loadReservation, [reservation_id])
 
     function loadReservation() {
@@ -40,6 +43,7 @@ function EditReservation() {
         return () => abortController.abort();
     }
 
+    //recognize changes and set form data to new changes also sets errors if fields contain invalid data
     function changeHandler({target}) {
         if(target.name === "reservation_date") {
             const resDate = Date.parse(target.value) + 77400000
@@ -108,6 +112,7 @@ function EditReservation() {
         }
     }
 
+    //button click hanler for submitting edits to change in the database
     async function submitHandler(event) {
         event.preventDefault()
         setTimeError(null)
@@ -117,6 +122,7 @@ function EditReservation() {
         .catch(setReservationError)
     }
 
+    //conditional rendering to set status color
     function coloredText(status) {
         if(status === "booked") {
             return <span className="text-primary font-weight-bold">{status}</span>

@@ -8,8 +8,11 @@ import ErrorAlert from "./ErrorAlert"
 function CreateReservation() {
     const history = useHistory()
     const query = useQuery()
+    
+    //sets date to the query date or today be default
     const date = query.get("date") ? query.get("date") : today()
 
+    //sets initial form data to empty with exception of status which is automaticaly boooked
     const initialFormState = {
         first_name: "",
         last_name: "",
@@ -20,6 +23,7 @@ function CreateReservation() {
         status: "booked"
     }
 
+    //set state variables
     const [formData, setFormData] = useState(initialFormState)
     const [reservationError, setReservationError] = useState(null)
     const [peopleError, setPeopleError] = useState(null)
@@ -28,6 +32,7 @@ function CreateReservation() {
     const [timeError, setTimeError] = useState(null)
     const [pastTimeError, setPastTimeError] = useState(null)
 
+    //button handler for submit button to add reservation to database
     function submitHandler(event) {
         event.preventDefault()
         const abortController = new AbortController()
@@ -37,6 +42,7 @@ function CreateReservation() {
         .catch(setReservationError)
     }
 
+    //recognize changes and set form data to new changes also sets errors if fields contain invalid data
     function changeHandler({target}) {
         
         if(target.name === "reservation_date") {
