@@ -107,10 +107,6 @@ git clone (url)
 
 Run: npm install
 
-Using existing database:  
-To seed original data navigate to the backend folder and run:  
-npx knex seed:run  
-
 Using your own database:
 Update the backend env file. /backend-end/.env with your own url database.  
 
