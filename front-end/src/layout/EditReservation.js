@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {readReservation, editReservation} from "../utils/api"
 import {useHistory, useParams} from "react-router-dom"
 import ErrorAlert from "./ErrorAlert"
+import Form from "./Form"
 
 
 function EditReservation() {
@@ -9,11 +10,6 @@ function EditReservation() {
     //set state variables 
     const [reservation, setReservation] = useState([])
     const [reservationError, setReservationError] = useState(null)
-    const [peopleError, setPeopleError] = useState(null)
-    const [dateError, setDateError] = useState(null)
-    const [dayError, setDayError] = useState(null)
-    const [timeError, setTimeError] = useState(null)
-    const [pastTimeError, setPastTimeError] = useState(null)
     const [formData, setFormData] = useState({})
 
     const history = useHistory()
@@ -43,71 +39,9 @@ function EditReservation() {
         return () => abortController.abort();
     }
 
-    //recognize changes and set form data to new changes also sets errors if fields contain invalid data
-    function changeHandler({target}) {
-        if(target.name === "reservation_date") {
-            const resDate = Date.parse(target.value) + 77400000
-            const resDay = new Date(target.value).getDay()
-            const date = Date.now() - 25200000
-            if(resDate < date) {
-                setDateError({
-                    message: "Selected reservation date has already passed, date must be today or in the future"
-                })
-            }
-            if(resDate > Date.now()) {
-                setDateError(null)
-            }
-            if(resDay + 1 === 2) {
-                setDayError({
-                    message: "Reservation day is invalid. The restuarant is closed on Tuesdays"
-                })
-            }
-            if(resDay + 1 !== 2) {
-                setDayError(null)
-            }
-        }
-        if(target.name === "reservation_time") {
-            const data = document.querySelector("input[name='reservation_date']")
-            const value = data.value
-            const parseTime = Date.parse(value)
-            const resTimeOfDay = (Number(target.value.substring(0,2) * 60) + Number(target.value.substring(3))) * 60000
-            const resTime = (resTimeOfDay + parseTime)
-            const time = Date.now() - 25200000
-            if(resTime < time) {
-                setPastTimeError({
-                    message: `Selected reservation time has already passed, time must be today or in the future`
-                })
-            }
-            if(resTime >= time) {
-                setPastTimeError(null)
-            }
-        }
-        if(target.name === "people") {
-            if(target.value < 1) {
-                setPeopleError({
-                    message: "Amount of people must be more then 0"
-                })
-            } 
-            if(target.value > 0 || !target.value) {
-                setPeopleError(null)
-            }
-            const peopleNum = Number(target.value)
-            setFormData({
-                ...formData,
-                people: peopleNum
-            })
-        } else {
-        setFormData({
-            ...formData,
-            [target.name]: target.value
-        });
-        }
-    }
-
-    //button click hanler for submitting edits to change in the database
+    //button click handler for submitting edits to change in the database
     async function submitHandler(event) {
         event.preventDefault()
-        setTimeError(null)
         const abortController = new AbortController()
         editReservation(formData, abortController.signal)
         .then(() => {history.push(`/dashboard?date=${reservation.reservation_date}`)})
@@ -148,92 +82,7 @@ function EditReservation() {
                 </div>
             </div>
             <h4 className= "mt-3">Edit Fields:</h4>
-            <form>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="first-name">First Name:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="form-input"
-                        name="first_name"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.first_name}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="last-name">Last Name:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="form-input"
-                        name="last_name"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.last_name}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="modile-number">Phone Number:</label>
-                    <input
-                        type="tel"
-                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                        className="form-control"
-                        id="form-input"
-                        name="mobile_number"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.mobile_number}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="date">Reservation Date:</label>
-                    <ErrorAlert error={dateError} />
-                    <ErrorAlert error={dayError} />
-                    <input
-                        type="date"
-                        pattern="\d{4}-\d{2}-\d{2}"
-                        className="form-control"
-                        id="form-input"
-                        name="reservation_date"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.reservation_date}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="time">Reservation Time:</label>
-                    <ErrorAlert error={timeError} />
-                    <ErrorAlert error={pastTimeError} />
-                    <input
-                        type="time"
-                        pattern="[0-9]{2}:[0-9]{2}"
-                        className="form-control"
-                        id="form-input"
-                        name="reservation_time"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.reservation_time}
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="people">Number of People:</label>
-                    <ErrorAlert error={peopleError} />
-                    <input
-                        type="number"
-                        className="form-control"
-                        id="form-input"
-                        name="people"
-                        required={true}
-                        onChange={changeHandler}
-                        placeholder={reservation.people}
-                    />
-                </div>
-                <div className="mb-3">
-                <button type="submit" className="btn btn-primary submit_button" onClick={submitHandler}>Submit</button>
-                <button type="cancel" className="btn btn-secondary" onClick={history.goBack}>Cancel</button>
-                </div>
-            </form>
+            <Form formData = {formData} setFormData = {setFormData} submitHandler={submitHandler} reservation ={reservation}/>
         </div>
     )
 }

@@ -40,7 +40,7 @@ function Routes() {
       <Route exact={true} path="/tables/new">
         <CreateTable />
       </Route>
-      <Route exact path="/search">
+      <Route exact={true} path="/search">
         <SearchByNumber />
       </Route>
       <Route>
